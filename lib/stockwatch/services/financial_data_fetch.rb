@@ -31,7 +31,7 @@ module Services
     def save_financial(issuer, data, currency)
       period = data.dig('period').split('|')
       data = data.dig('data')
-
+      financial = Stockwatch::Financial.find_by(issuer_id: issuer.id, year: period[0], period: period[1])
       return unless financial.nil?
       return if data.nil?
 
