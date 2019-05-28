@@ -3,7 +3,6 @@
 require 'bundler'
 require './main'
 require 'sinatra/activerecord/rake'
-require 'pry'
 
 desc 'Default: run specs' # & rubocop'
 task test: [:spec] # :rubocop]
@@ -11,6 +10,7 @@ task test: [:spec] # :rubocop]
 desc 'Run specs'
 begin
   require 'rspec/core/rake_task'
+  require 'pry'
   RSpec::Core::RakeTask.new(:spec) do |t|
     t.rspec_opts = '--require ./spec/spec_helper'
   end
