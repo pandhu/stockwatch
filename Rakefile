@@ -16,7 +16,7 @@ begin
   end
   Pry.config.input = STDIN
   Pry.config.output = STDOUT
-rescue => e
+rescue LoadError, NameError
 end
 
 namespace :issuers do
