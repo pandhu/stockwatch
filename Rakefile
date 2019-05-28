@@ -14,11 +14,10 @@ begin
   RSpec::Core::RakeTask.new(:spec) do |t|
     t.rspec_opts = '--require ./spec/spec_helper'
   end
-rescue LoadError
+  Pry.config.input = STDIN
+  Pry.config.output = STDOUT
+rescue => e
 end
-
-Pry.config.input = STDIN
-Pry.config.output = STDOUT
 
 namespace :issuers do
   task :fetch do
