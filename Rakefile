@@ -3,15 +3,18 @@
 require 'bundler'
 require './main'
 require 'sinatra/activerecord/rake'
-require 'rspec/core/rake_task'
 require 'pry'
 
 desc 'Default: run specs' # & rubocop'
 task test: [:spec] # :rubocop]
 
 desc 'Run specs'
-RSpec::Core::RakeTask.new(:spec) do |t|
-  t.rspec_opts = '--require ./spec/spec_helper'
+begin
+  require 'rspec/core/rake_task'
+  RSpec::Core::RakeTask.new(:spec) do |t|
+    t.rspec_opts = '--require ./spec/spec_helper'
+  end
+rescue LoadError
 end
 
 Pry.config.input = STDIN

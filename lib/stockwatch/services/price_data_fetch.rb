@@ -11,7 +11,7 @@ module Services
 
     def perform
       issuers = Stockwatch::Issuer.all
-      issuers_batch = issuers.each_slice(300).to_a
+      issuers_batch = issuers.each_slice(100).to_a
       threads = []
       issuers_batch.each do | batch |
         threads.push(Thread.new{perform_helper(batch)})
