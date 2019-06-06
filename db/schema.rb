@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_05_25_035317) do
+ActiveRecord::Schema.define(version: 2019_06_06_003357) do
 
   create_table "financials", id: :bigint, unsigned: true, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "issuer_id"
@@ -51,12 +51,15 @@ ActiveRecord::Schema.define(version: 2019_05_25_035317) do
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "current_price", default: 0
+    t.bigint "current_market_capitalization"
+    t.float "current_price_earning_ratio"
+    t.float "current_price_to_book_value_ratio"
   end
 
   create_table "stock_prices", id: :bigint, unsigned: true, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
-    t.bigint "issuer_id"
+    t.integer "issuer_id"
     t.date "date"
-    t.bigint "price"
     t.integer "open"
     t.integer "high"
     t.integer "low"
@@ -64,6 +67,8 @@ ActiveRecord::Schema.define(version: 2019_05_25_035317) do
     t.bigint "volume"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["date"], name: "date"
+    t.index ["issuer_id"], name: "issuer_id"
   end
 
 end
