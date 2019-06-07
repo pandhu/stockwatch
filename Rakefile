@@ -31,6 +31,19 @@ namespace :issuers do
       retry if retry_count < 2
     end
   end
+
+  task :sync_metrics do
+    retry_count = 0
+    begin
+      response = Services::SyncCurrentMetrics.new.perform
+    rescue => e
+      p e
+      p e.backtrace
+      retry_count += 1
+      sleep(3)
+      retry if retry_count < 2
+    end
+  end
 end
 
 namespace :financials do

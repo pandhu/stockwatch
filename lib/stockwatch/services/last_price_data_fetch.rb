@@ -29,7 +29,6 @@ module Services
     def fetch_price_data(issuer)
       url = "#{FETCH_URL}&stockCode=#{issuer.code}"
       response = Connection.get(url, nil)
-      binding.pry
       results  = response.body.split("\n")
       last_entry = results.last
       input = JSON.parse(last_entry)
