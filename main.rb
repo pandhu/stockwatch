@@ -5,6 +5,8 @@ require 'base64'
 require 'cgi'
 require 'openssl'
 require 'require_all'
+require 'graphql'
+require 'rack/contrib'
 
 Dotenv.load
 
@@ -26,5 +28,7 @@ class Main < Sinatra::Base
   require_all './lib/stockwatch/models/*.rb'
   require_all './app/utilities/**/*.rb'
   require_all './lib/**/*.rb'
+  require_all './app/graphql/types/*.rb'
+  require_all './app/graphql/*.rb'
   require_all './app/controllers/**/*.rb'
 end
