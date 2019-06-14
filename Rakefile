@@ -62,10 +62,14 @@ namespace :financials do
 end
 
 namespace :prices do
-  task :fetch do
+  task :fetch, [:date_range] do |task, args|
     retry_count = 0
     begin
-      response = Services::PriceDataFetch.new.perform
+      start_date = args[:date_range].split(' ')[0]
+      end_date = args[:date_range].split(' ')[1]
+      Date.parse(start_date).upto(Date.parse(end_date)) do |date|
+        response = Services::PriceDataFetch.new(date).perform
+      end
     rescue => e
       p e
       p e.backtrace

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_06_06_003357) do
+ActiveRecord::Schema.define(version: 2019_06_13_141040) do
 
   create_table "financials", id: :bigint, unsigned: true, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "issuer_id"
@@ -46,6 +46,13 @@ ActiveRecord::Schema.define(version: 2019_06_06_003357) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "indexes", id: :integer, unsigned: true, default: nil, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.string "code"
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "issuers", id: :bigint, unsigned: true, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "code"
     t.string "name"
@@ -67,6 +74,11 @@ ActiveRecord::Schema.define(version: 2019_06_06_003357) do
     t.bigint "volume"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "foreign_sell", default: 0
+    t.bigint "foreign_buy", default: 0
+    t.bigint "bid_volume"
+    t.bigint "offer_volume"
+    t.integer "frequency"
     t.index ["date"], name: "date"
     t.index ["issuer_id"], name: "issuer_id"
   end
