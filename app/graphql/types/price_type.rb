@@ -6,5 +6,10 @@ module Types
     field :low, Integer, null: false
     field :close, Integer, null: false
     field :volume, Integer, null: false
+    field :foreign_buy, Integer, null: false
+    field :foreign_sell, Integer, null: false
+    field :frequency, Integer, null: false
+    field :bid_volume, Integer, null: false
+    field :offer_volume, Integer, null: false
   end
 end

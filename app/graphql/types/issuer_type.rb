@@ -1,4 +1,5 @@
-require_relative 'price_type'
+require_relative '../resolvers/stock_prices'
+require_relative '../resolvers/financials'
 
 module Types
   class Issuer < GraphQL::Schema::Object
@@ -9,6 +10,7 @@ module Types
     field :current_market_capitalization, Integer, null: true
     field :current_price_earning_ratio, Float, null: true
     field :current_price_to_book_value_ratio, Float, null: true
-    field :stock_prices, [Types::Price], null: true
+    field :stock_prices, resolver: Resolvers::StockPrices
+    field :financials, resolver: Resolvers::Financials
   end
 end

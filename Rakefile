@@ -65,9 +65,15 @@ namespace :prices do
   task :fetch, [:date_range] do |task, args|
     retry_count = 0
     begin
-      start_date = args[:date_range].split(' ')[0]
-      end_date = args[:date_range].split(' ')[1]
-      Date.parse(start_date).upto(Date.parse(end_date)) do |date|
+      if args.dig(:date_range).nil?
+        start_date = Date.today
+        end_date = Date.today
+      else
+        start_date = Date.parse(args[:date_range].split(' ')[0])
+        end_date = Date.parse(args[:date_range].split(' ')[1])
+      end
+
+      start_date.upto(end_date) do |date|
         response = Services::PriceDataFetch.new(date).perform
       end
     rescue => e
