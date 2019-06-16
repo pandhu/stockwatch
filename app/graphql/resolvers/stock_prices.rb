@@ -9,7 +9,7 @@ module Resolvers
 
     def resolve(order_by: nil, direction: 'ASC')
       if(order_by.nil?)
-        Stockwatch::StockPrice.where(issuer_id: @object.id)
+        Stockwatch::StockPrice.where(issuer_id: @object.id).order("date")
       else
         Stockwatch::StockPrice.where(issuer_id: @object.id).order("#{order_by} #{direction}")
       end
