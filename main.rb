@@ -15,7 +15,6 @@ ENV['RACK_ENV'] ||= 'development'
 Bundler.require(:default, ENV['RACK_ENV'])
 # loader class
 class Main < Sinatra::Base
-  set :bind, '0.0.0.0'
   configure do
     enable :cross_origin
   end
