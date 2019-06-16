@@ -2,7 +2,6 @@ class GraphqlController < ApplicationController
   use Rack::PostBodyContentTypeParser
 
   post '/' do
-    cross_origin
     result = Schemas.execute(
       params[:query],
       variables: params[:variables],
