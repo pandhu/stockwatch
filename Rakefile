@@ -23,7 +23,9 @@ namespace :issuers do
   task :fetch do
     retry_count = 0
     begin
+      p 'fetch issuers data'
       response = Services::IssuerDataFetch.new.perform
+      p 'fetch issuers data done'
     rescue => e
       p e.backtrace
       retry_count += 1
@@ -35,7 +37,9 @@ namespace :issuers do
   task :sync_metrics do
     retry_count = 0
     begin
+      p 'sync issuers metric'
       response = Services::SyncCurrentMetrics.new.perform
+      p 'sync issuers metric done'
     rescue => e
       p e
       p e.backtrace
@@ -47,10 +51,16 @@ namespace :issuers do
 end
 
 namespace :financials do
-  task :fetch do
+  task :fetch, [:code] do | task, args |
     retry_count = 0
     begin
-      response = Services::FinancialDataFetch.new.perform
+      p 'fetch financial data'
+      if args['code'].nil?
+        response = Services::FinancialDataFetch.new.perform
+      else
+        response = Services::FinancialDataFetch.new(args['code']).perform
+      end
+      p 'fetch financial data done'
     rescue => e
       p e
       p e.backtrace
@@ -65,7 +75,7 @@ namespace :prices do
   task :fetch, [:date_range] do |task, args|
     retry_count = 0
     begin
-      if args.dig(:date_range).nil?
+      if args['date_range'].nil?
         start_date = Date.today
         end_date = Date.today
       else
@@ -74,6 +84,7 @@ namespace :prices do
       end
 
       start_date.upto(end_date) do |date|
+        p "fetch price data #{date}"
         response = Services::PriceDataFetch.new(date).perform
       end
     rescue => e
@@ -96,6 +107,22 @@ namespace :lastprice do
       p e.backtrace
       retry_count += 1
       sleep(3)
+      retry if retry_count < 2
+    end
+  end
+end
+
+namespace :indexes do
+  task :sync do
+    retry_count = 0
+    begin
+      p 'sync indexes data'
+      response = Services::Indexes::Sync.new.perform
+      p 'sync indexes data done'
+    rescue => e
+      p e.backtrace
+      retry_count += 1
+      sleep(10)
       retry if retry_count < 2
     end
   end

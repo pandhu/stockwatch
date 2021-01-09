@@ -44,7 +44,9 @@ module Services
 
     def calculate_price_to_book_value_ratio(issuer, price)
       last_financial_report = issuer.last_period_financial_report
-      calculate_market_capitalization(issuer, price).to_f / ((last_financial_report.assets - last_financial_report.liabilities) * 1_000_000)
+      equity = ((last_financial_report.assets - last_financial_report.liabilities) * 1_000_000)
+      return 0 if equity == 0
+      calculate_market_capitalization(issuer, price).to_f / equity
     end
   end
 end

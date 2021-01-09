@@ -1,11 +1,21 @@
+require 'bigdecimal'
 module Services
   class FinancialDataFetch
 
     FETCH_URL = ENV['FINANCIAL_DATA_FETCH_URL'].freeze
     PERIODS = ['3m', '6m', '9m', '12m']
     #PERIODS = ['3m']
+
+    def initialize(issuer_code = nil)
+      @issuer_code = issuer_code
+    end
+
     def perform
-      issuers = Stockwatch::Issuer.all
+      if @issuer_code.nil?
+        issuers = Stockwatch::Issuer.all
+      else
+        issuers = Stockwatch::Issuer.where(code: @code)
+      end
 
       issuers.each do | issuer |
         PERIODS.each do | period |
@@ -20,11 +30,19 @@ module Services
     end
 
     def fetch_financial_data(issuer, period)
-      response = Connection.get("#{FETCH_URL}#{period}/#{issuer.code}", nil)
-      result   = JSON.parse(response)
-      financial_data = result.dig('finance')
-      financial_data.each do | data |
-        save_financial(issuer, data, result.dig('currency'))
+      p "fetch financial data #{issuer.code} #{period}"
+      try_count = 0
+      begin
+        try_count += 1
+        response = Connection.get("#{FETCH_URL}#{period}/#{issuer.code}", nil)
+        result   = JSON.parse(response)
+        financial_data = result.dig('finance')
+        financial_data.each do | data |
+          save_financial(issuer, data, result.dig('currency'))
+        end
+      rescue => e
+        p response
+        retry if try_count < 3
       end
     end
 
@@ -32,21 +50,19 @@ module Services
       period = data.dig('period').split('|')
       data = data.dig('data')
       financial = Stockwatch::Financial.find_by(issuer_id: issuer.id, year: period[0], period: period[1])
-      return unless financial.nil?
       return if data.nil?
 
-      financial = Stockwatch::Financial.new
       financial.issuer_id                   = issuer.id
       financial.currency                    = currency
       financial.year                        = period[0]
       financial.period                      = period[1]
       financial.outstanding_shares          = data["EQY_SH_OUT"].to_f * 1_000_000
-      financial.market_capitalization       = data["HISTORICAL_MARKET_CAP"].to_f.to_i
-      financial.assets                      = data["BS_TOT_ASSET"].to_i
-      financial.liabilities                 = data["BS_TOT_LIAB2"].to_i
-      financial.equity                      = data["TOTAL_EQUITY"].to_i
+      financial.market_capitalization       = BigDecimal.new(data["HISTORICAL_MARKET_CAP"]).to_i
+      financial.assets                      = BigDecimal.new(data["BS_TOT_ASSET"]).to_i
+      financial.liabilities                 = BigDecimal.new(data["BS_TOT_LIAB2"]).to_i
+      financial.equity                      = BigDecimal.new(data["TOTAL_EQUITY"]).to_i
       financial.net_debt                    = data["NET_DEBT"].to_i
-      financial.sales                       = data["SALES_REV_TURN"].to_i
+      financial.sales                       = BigDecimal.new(data["SALES_REV_TURN"]).to_i
       financial.gross_profit                = data["GROSS_PROFIT"].to_i
       financial.operating_profit            = data["IS_OPER_INC"].to_i
       financial.ebitda                      = data["EBITDA"].to_i
