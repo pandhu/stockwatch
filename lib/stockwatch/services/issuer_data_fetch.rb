@@ -11,6 +11,7 @@ module Services
 
     def save_issuers(result)
       result.each do |input|
+        p "fetch #{input["KodeEmiten"]}"
         issuer = Stockwatch::Issuer.find_by(code: input["KodeEmiten"])
         save_issuer(input) if issuer.nil?
       end
